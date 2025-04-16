@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}{{ workout_name }}{% endblock %}
+{% block content %}
+<h2>{{ workout_name }}</h2>
+<ul class="list-group">
+    {% for exercise in exercises %}
+        <li class="list-group-item">{{ exercise.name }} - {{ exercise.sets }} sets, {{ exercise.reps }} reps</li>
+    {% endfor %}
+</ul>
+<button class="btn btn-primary mt-3">Start/End Workout</button>
+{% endblock %}
