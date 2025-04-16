@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5cnhqdm5yZWpzbmFxdmRyemllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MjAxMzQsImV4cCI6MjA2MDM5NjEzNH0.si4riSViTZygRPXTaVVwd-6xHvPdvBbugQrxtelcG7Y'  # Important for session management
-app.config['SQLALCHEMY_DATABASE_URI'] = 'https://tyrxjvnrejsnaqvdrzie.supabase.co'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:webappfitness!@db.tyrxjvnrejsnaqvdrzie.supabase.co:5432/postgres'
 db = SQLAlchemy(app)
 
 # Define your database models here (e.g., User, Workout, Exercise, Progress)
