@@ -1,109 +1,69 @@
+from flask import Flask, render_template, request, redirect, jsonify
+import sqlite3
 import os
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
-# Import your forms from forms.py
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5cnhqdm5yZWpzbmFxdmRyemllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MjAxMzQsImV4cCI6MjA2MDM5NjEzNH0.si4riSViTZygRPXTaVVwd-6xHvPdvBbugQrxtelcG7Y'  # Important for session management
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:webappfitness!@db.tyrxjvnrejsnaqvdrzie.supabase.co:5432/postgres'
-db = SQLAlchemy(app)
+DB_PATH = os.path.join(os.path.dirname(__file__), 'db', 'workouts.db')
 
-# Define your database models here (e.g., User, Workout, Exercise, Progress)
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    starting_weight = db.Column(db.Float)
-    current_weight = db.Column(db.Float)
-    goal_weight = db.Column(db.Float)
-    progress_entries = db.relationship('Progress', backref='user', lazy=True)
 
-class Workout(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    exercises = db.relationship('WorkoutExercise', backref='workout', lazy=True)
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-class Exercise(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-
-class WorkoutExercise(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    workout_id = db.Column(db.Integer, db.ForeignKey('workout.id'), nullable=False)
-    exercise_id = db.Column(db.Integer, db.ForeignKey('exercise.id'), nullable=False)
-    sets = db.Column(db.Integer)
-    reps = db.Column(db.Integer)
-
-class Progress(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    date = db.Column(db.Date)
-    bench_press = db.Column(db.Float)
-    squat = db.Column(db.Float)
-    calories_burned = db.Column(db.Integer)
-
-# --- Routes ---
 
 @app.route('/')
 def index():
-    if 'user_id' in session:
-        # Fetch workouts completed this month for the user
-        # ... database query ...
-        workouts_completed = 5  # Example
-        return render_template('index.html', workouts_completed=workouts_completed)
-    return redirect(url_for('login'))
+    return render_template('index.html', workouts_completed=3)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    # Implement login logic using forms and database authentication
-    return render_template('login.html')
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    # Implement registration logic using forms and database insertion
-    return render_template('register.html')
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 
 @app.route('/workouts')
 def workout_selection():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
     return render_template('workout_selection.html')
+
 
 @app.route('/workouts/<workout_type>')
 def workout_details(workout_type):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    # Fetch workout details from the database based on workout_type
-    # ... database query ...
-    exercises = [
-        {'name': 'Squats', 'sets': 3, 'reps': 10},
-        {'name': 'Lunges', 'sets': 3, 'reps': 12},
-        {'name': 'Calf Raises', 'sets': 2, 'reps': 15}
-    ] # Example data
-    return render_template('workout_details.html', workout_name=f"{workout_type.capitalize()} Day", exercises=exercises)
+    conn = get_db()
+    cursor = conn.execute("SELECT name, sets, reps FROM exercises WHERE type = ?", (workout_type,))
+    exercises = cursor.fetchall()
+    conn.close()
+    return render_template('workout_details.html', workout_name=f"{workout_type.title()} Day", exercises=exercises)
+
 
 @app.route('/progress', methods=['GET', 'POST'])
 def progress_tracking():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    user = User.query.get(session['user_id'])
     if request.method == 'POST':
-        user.starting_weight = request.form.get('starting_weight')
-        user.current_weight = request.form.get('current_weight')
-        user.goal_weight = request.form.get('goal')
-        # Update max tracker data in the database
-        # ...
-        db.session.commit()
-        return redirect(url_for('progress_tracking'))
+        form = request.form
+        conn = get_db()
+        conn.execute(
+            "INSERT INTO progress (starting_weight, current_weight, goal, bench_press, squat, calories_burned) VALUES (?, ?, ?, ?, ?, ?)",
+            (form['starting_weight'], form['current_weight'], form['goal'], form['bench_press'], form['squat'], form['calories_burned'])
+        )
+        conn.commit()
+        conn.close()
+        return redirect('/progress')
+
+    conn = get_db()
+    cursor = conn.execute("SELECT * FROM progress ORDER BY id DESC LIMIT 1")
+    user = cursor.fetchone()
+    conn.close()
     return render_template('progress_tracking.html', user=user)
 
-@app.route('/logout')
-def logout():
-    session.pop('user_id', None)
-    return redirect(url_for('index'))
+
+@app.route('/api/progress')
+def api_progress():
+    conn = get_db()
+    cursor = conn.execute("SELECT id, current_weight FROM progress ORDER BY id DESC LIMIT 10")
+    data = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify({"data": data})
+
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)

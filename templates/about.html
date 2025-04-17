@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}About Us{% endblock %}
+{% block content %}
+<h2>Meet the Team</h2>
+<div class="row">
+    <div class="col-md-4">
+        <button class="btn btn-outline-info team-btn" data-target="#brendan">Brendan</button>
+        <div id="brendan" class="card mt-2 d-none">
+            <div class="card-body">
+                <h5 class="card-title">Brendan Leon</h5>
+                <p>Email: leonb22@students.ecu.edu</p>
+                <p>Role: UX Designer</p>
+                <p>Fun Fact: Loves to cook</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-outline-info team-btn" data-target="#irving">Irving</button>
+        <div id="irving" class="card mt-2 d-none">
+            <div class="card-body">
+                <h5 class="card-title">Irving Villanueva</h5>
+                <p>Email: villanuevai23@students.ecu.edu</p>
+                <p>Role: Lead Dev</p>
+                <p>Fun Fact: Loves to run</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-outline-info team-btn" data-target="#landon">Landon</button>
+        <div id="landon" class="card mt-2 d-none">
+            <div class="card-body">
+                <h5 class="card-title">Landon Waller</h5>
+                <p>Email: wallerl20@students.ecu.edu</p>
+                <p>Role: QA Engineer</p>
+                <p>Fun Fact: Loves leg day</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-outline-info team-btn" data-target="#shane">Shane</button>
+        <div id="shane" class="card mt-2 d-none">
+            <div class="card-body">
+                <h5 class="card-title">Shane Wilson</h5>
+                <p>Email: wilsonshan22@students.ecu.edu</p>
+                <p>Role: Project Manager</p>
+                <p>Fun Fact: Loves to swim</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

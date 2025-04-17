@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<h1>Welcome to Your Fitness Tracker!</h1>
+<h1>Welcome to the Elevate Fitness App!</h1>
 {% if workouts_completed %}
     <p>You have completed {{ workouts_completed }} workouts this month.</p>
 {% endif %}
-<a href="{{ url_for('workout_selection') }}" class="btn btn-primary">Start Workout</a>
+<p>Select a workout type to begin tracking your progress.</p>
+<a class="btn btn-primary" href="/workouts">Start Workout</a>
 {% endblock %}

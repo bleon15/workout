@@ -1,0 +1,53 @@
+body {
+    background-color: #000000; /* pure black background */
+    color: #8a2be2; /* ultraviolet/neon purple text */
+    font-family: 'Orbitron', sans-serif;
+}
+
+
+h1, h2, h3, h4 {
+    text-shadow: 0 0 10px #8a2be2, 0 0 20px #8a2be2;
+}
+
+
+.navbar {
+    background-color: #111 !important;
+}
+
+.navbar-brand, .nav-link {
+    color: #8a2be2 !important;
+}
+
+.nav-link:hover {
+    color: #ff66ff !important; /* pinkish hover effect */
+}
+
+.btn-primary, .btn-success {
+    background-color: #8a2be2;
+    border-color: #8a2be2;
+    color: #000000;
+}
+
+.btn-primary:hover, .btn-success:hover {
+    background-color: #a04fff;
+    border-color: #a04fff;
+    color: #ffffff;
+}
+
+.card {
+    background-color: #222;
+    color: #8a2be2;
+    border: 1px solid #8a2be2;
+}
+
+.list-group-item {
+    background-color: #111;
+    color: #8a2be2;
+    border: 1px solid #8a2be2;
+}
+
+input.form-control, select.form-control, textarea.form-control {
+    background-color: #1a1a1a;
+    color: #8a2be2;
+    border: 1px solid #8a2be2;
+}
