@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect, jsonify, session
 import sqlite3
 import os
 
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(__file__), 'db', 'workouts.db')
-
+app.secret_key = '4648973168'
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -30,7 +30,7 @@ def workout_selection():
 @app.route('/workouts/<workout_type>')
 def workout_details(workout_type):
     conn = get_db()
-    cursor = conn.execute("SELECT name, sets, reps FROM exercises WHERE type = ?", (workout_type,))
+    cursor = conn.execute("SELECT name, sets, reps, miles FROM exercises WHERE type = ?", (workout_type,))
     exercises = cursor.fetchall()
     conn.close()
     return render_template('workout_details.html', workout_name=f"{workout_type.title()} Day", exercises=exercises)
@@ -63,6 +63,11 @@ def api_progress():
     data = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return jsonify({"data": data})
+
+@app.route('/log-workout', methods=['POST'])
+def log_workout():
+    session['workouts_completed'] = session.get('workouts_completed', 0) + 1
+    return redirect('/workouts')
 
 
 if __name__ == '__main__':

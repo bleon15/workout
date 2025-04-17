@@ -10,20 +10,23 @@ with open('db/schema.sql') as f:
 
 # Seed exercises
 data = [
-    ('legs', 'Squats', 3, 10),
-    ('legs', 'Lunges', 3, 12),
-    ('legs', 'Goblin Squats', 3, 10),
-    ('chest', 'Bench Press', 3, 10),
-    ('chest', 'Chest Fly', 3, 12),
-    ('chest', 'Incline Dumbell Press', 4, 8),
-    ('arms', 'Bicep Curls', 2, 15),
-    ('arms', 'Hammer Curls', 2, 15),
-    ('arms', 'Preacher Curls', 2, 15),
-    ('cardio', 'Running', 1, 30)
-    ('cardio', 'Sprints', 5, 10)
+    ('legs', 'Squats', 3, 10, None),
+    ('legs', 'Lunges', 3, 12, None),
+    ('legs', 'Goblin Squats', 3, 10, None),
+    ('chest', 'Bench Press', 3, 10, None),
+    ('chest', 'Chest Fly', 3, 12, None),
+    ('chest', 'Incline Dumbell Press', 4, 8, None),
+    ('arms', 'Bicep Curls', 2, 15, None),
+    ('arms', 'Hammer Curls', 2, 15, None),
+    ('arms', 'Preacher Curls', 2, 15, None),
+    ('cardio', 'Running', None, None, 3),
+    ('cardio', 'Sprints', 5, 10, None)
 ]
-conn.executemany("INSERT INTO exercises (type, name, sets, reps) VALUES (?, ?, ?, ?)", data)
 
+# Insert data into the exercises table (with correct number of columns)
+conn.executemany("INSERT INTO exercises (type, name, sets, reps, miles) VALUES (?, ?, ?, ?, ?)", data)
+
+# Commit changes and close the connection
 conn.commit()
 conn.close()
 print("Database initialized and seeded!")
