@@ -19,8 +19,8 @@ data = [
     ('arms', 'Bicep Curls', 2, 15, None),
     ('arms', 'Hammer Curls', 2, 15, None),
     ('arms', 'Preacher Curls', 2, 15, None),
-    ('cardio', 'Running', None, None, 3)
-    ('cardio', 'Sprints', 5, 10)
+    ('cardio', 'Running', None, None, 3),
+    ('cardio', 'Sprints', 5, 10, None)
 ]
 
 # Insert data into the exercises table (with correct number of columns)

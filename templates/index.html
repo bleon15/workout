@@ -1,10 +1,34 @@
 {% extends 'base.html' %}
 {% block title %}Home{% endblock %}
+
 {% block content %}
-<h1>Welcome to the Elevate Fitness App!</h1>
-{% if workouts_completed %}
-    <p>You have completed {{ workouts_completed }} workouts this month.</p>
-{% endif %}
-<p>Select a workout type to begin tracking your progress.</p>
-<a class="btn btn-primary" href="/workouts">Start Workout</a>
+    <h1>Welcome to the Elevate Fitness App!</h1>
+
+    <p>You have completed <span id="workout-count">0</span> workouts this month.</p>
+
+    <p>Select a workout type to begin tracking your progress.</p>
+    <button class="btn btn-primary" onclick="startWorkout()">Start Workout</button>
+
+    <script>
+        // Retrieve workout count from localStorage, or set to 0 if not found
+        let workoutCount = localStorage.getItem('workoutCount') ? parseInt(localStorage.getItem('workoutCount')) : 0;
+
+        // Display the current count on page load
+        document.getElementById('workout-count').innerText = workoutCount;
+
+        function startWorkout() {
+            workoutCount++;  // Increment the workout count
+            document.getElementById('workout-count').innerText = workoutCount;
+
+            // Save the updated count to localStorage
+            localStorage.setItem('workoutCount', workoutCount);
+
+            // Navigate to the workouts page after a short delay
+            setTimeout(() => {
+                window.location.href = "/workouts";
+            }, 300); // Optional delay to ensure the number updates
+        }
+    </script>
 {% endblock %}
+
+
