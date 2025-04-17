@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS exercises (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type TEXT NOT NULL,
-    name TEXT NOT NULL,
-    sets INTEGER,
-    reps INTEGER
+    Category TEXT NOT NULL,
+    Workout TEXT NOT NULL,
+    Sets INTEGER,
+    Reps INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS progress (
@@ -14,4 +14,10 @@ CREATE TABLE IF NOT EXISTS progress (
     bench_press INTEGER,
     squat INTEGER,
     calories_burned INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS workout_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Category TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );

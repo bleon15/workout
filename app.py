@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, jsonify
+from datetime import datetime, timedelta
 import sqlite3
 import os
 
@@ -11,10 +12,28 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def get_weekly_workout_count():
+    conn = get_db()
+    result = conn.execute("""
+        SELECT COUNT(*) FROM workout_log 
+        WHERE strftime('%W', timestamp) = strftime('%W', 'now')
+    """).fetchone()[0]
+    conn.close()
+    return result
+
 
 @app.route('/')
 def index():
-    return render_template('index.html', workouts_completed=3)
+    conn = get_db()
+    count = conn.execute("""
+        SELECT COUNT(*) FROM workout_log 
+        WHERE strftime('%W', timestamp) = strftime('%W', 'now')
+    """).fetchone()[0]
+    conn.close()
+
+    return render_template('index.html', workouts_completed=count)
+
+
 
 
 @app.route('/about')
@@ -27,13 +46,43 @@ def workout_selection():
     return render_template('workout_selection.html')
 
 
-@app.route('/workouts/<workout_type>')
+@app.route('/workouts/<workout_type>', methods=['GET', 'POST'])
 def workout_details(workout_type):
     conn = get_db()
-    cursor = conn.execute("SELECT name, sets, reps FROM exercises WHERE type = ?", (workout_type,))
+    logged = False
+
+    # Fetch the exercises first
+    cursor = conn.execute(
+    "SELECT Workout, Sets, Reps FROM exercises WHERE Category = ? ORDER BY RANDOM() LIMIT 3",
+    (workout_type.title(),)
+    )
+
     exercises = cursor.fetchall()
+
+    if request.method == 'POST':
+        # Step 1: Insert workout_log row
+        conn.execute("INSERT INTO  workout_log (type) VALUES (?)", (workout_type,))
+        log_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+
+        # Step 2: For each exercise, log how many sets were completed
+        for exercise in exercises:
+            name = exercise['Workout']
+            sets_completed = request.form.get(f"set_{name}", 0)
+            conn.execute(
+                "INSERT INTO workout_log_detail (log_id, exercise, sets_completed) VALUES (?, ?, ?)",
+                (log_id, name, sets_completed)
+            )
+
+        conn.commit()
+        logged = True
+
     conn.close()
-    return render_template('workout_details.html', workout_name=f"{workout_type.title()} Day", exercises=exercises)
+    return render_template('workout_details.html',
+                           workout_name=f"{workout_type.title()} Day",
+                           exercises=exercises,
+                           logged=logged)
+
+
 
 
 @app.route('/progress', methods=['GET', 'POST'])
