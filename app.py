@@ -30,7 +30,7 @@ def workout_selection():
 @app.route('/workouts/<workout_type>')
 def workout_details(workout_type):
     conn = get_db()
-    cursor = conn.execute("SELECT name, sets, reps FROM exercises WHERE type = ?", (workout_type,))
+    cursor = conn.execute("SELECT name, sets, reps, miles FROM exercises WHERE type = ?", (workout_type,))
     exercises = cursor.fetchall()
     conn.close()
     return render_template('workout_details.html', workout_name=f"{workout_type.title()} Day", exercises=exercises)
