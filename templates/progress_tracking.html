@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Progress{% endblock %}
+{% block content %}
+<h2>Track Your Progress</h2>
+<form method="POST">
+    <div class="form-group">
+        <label>Starting Weight</label>
+        <input type="number" class="form-control" name="starting_weight" value="{{ user.starting_weight }}">
+    </div>
+    <div class="form-group">
+        <label>Current Weight</label>
+        <input type="number" class="form-control" name="current_weight" value="{{ user.current_weight }}">
+    </div>
+    <div class="form-group">
+        <label>Goal Weight</label>
+        <input type="number" class="form-control" name="goal" value="{{ user.goal }}">
+    </div>
+    <h4>PRs</h4>
+    <div class="form-group">
+        <label>Bench Press Max</label>
+        <input type="number" class="form-control" name="bench_press">
+    </div>
+    <div class="form-group">
+        <label>Squat Max</label>
+        <input type="number" class="form-control" name="squat">
+    </div>
+    <div class="form-group">
+        <label>Calories Burned</label>
+        <input type="number" class="form-control" name="calories_burned">
+    </div>
+    <button class="btn btn-primary">Save Progress</button>
+</form>
+<div id="progressChart" class="mt-4"></div>
+{% endblock %}
+{% block scripts %}
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="{{ url_for('static', filename='js/d3_chart.js') }}"></script>
+{% endblock %}
